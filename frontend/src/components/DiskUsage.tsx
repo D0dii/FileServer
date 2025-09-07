@@ -13,7 +13,7 @@ export function DiskUsage() {
   } = useQuery({
     queryKey: ["disk-usage"],
     queryFn: getDiskUsage,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: parseInt(import.meta.env.VITE_DISK_USAGE_REFRESH_INTERVAL) || 30000, // Refresh every 30 seconds
   });
 
   if (isLoading) {

@@ -22,7 +22,7 @@ export function FileManager() {
   } = useQuery({
     queryKey: ["files"],
     queryFn: listFiles,
-    refetchInterval: 5000, // Refresh every 5 seconds
+    refetchInterval: parseInt(import.meta.env.VITE_FILES_REFRESH_INTERVAL) || 5000, // Refresh every 5 seconds
   });
 
   // Upload mutation
