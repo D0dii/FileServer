@@ -12,19 +12,16 @@ import (
 )
 
 const (
-	uploadDir = "./data"           // katalog na pliki
-	secret    = "password" // zmień na swój
+	uploadDir = "./data"
+	secret    = "password"
 )
 
-// Middleware do autoryzacji
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Add CORS headers
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-		
-		// Handle preflight requests
+
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
@@ -44,7 +41,6 @@ func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// Lista plików
 func listFiles(w http.ResponseWriter, r *http.Request) {
 	files, err := os.ReadDir(uploadDir)
 	if err != nil {
@@ -64,9 +60,8 @@ func listFiles(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Upload
 func uploadFile(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(10 << 20) // max 10MB
+	r.ParseMultipartForm(10 << 20)
 	file, handler, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "Invalid upload", http.StatusBadRequest)
@@ -85,13 +80,11 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Uploaded %s\n", handler.Filename)
 }
 
-// Pobieranie
 func downloadFile(w http.ResponseWriter, r *http.Request) {
 	filename := strings.TrimPrefix(r.URL.Path, "/download/")
 	http.ServeFile(w, r, filepath.Join(uploadDir, filename))
 }
 
-// Usuwanie
 func deleteFile(w http.ResponseWriter, r *http.Request) {
 	filename := strings.TrimPrefix(r.URL.Path, "/files/")
 	err := os.Remove(filepath.Join(uploadDir, filename))
@@ -102,7 +95,6 @@ func deleteFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Deleted %s\n", filename)
 }
 
-// Disk usage info
 type DiskUsage struct {
 	TotalBytes     uint64  `json:"totalBytes"`
 	FreeBytes      uint64  `json:"freeBytes"`
@@ -121,7 +113,6 @@ func getDiskUsage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Calculate disk usage
 	totalBytes := stat.Blocks * uint64(stat.Bsize)
 	freeBytes := stat.Bavail * uint64(stat.Bsize)
 	usedBytes := totalBytes - freeBytes
