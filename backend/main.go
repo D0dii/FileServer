@@ -134,12 +134,16 @@ func getDiskUsage(w http.ResponseWriter, r *http.Request) {
 func main() {
 	os.MkdirAll(uploadDir, 0755)
 
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		fmt.Fprint(w, "ok, server running")
+	})
 	http.HandleFunc("/files", authMiddleware(listFiles))
 	http.HandleFunc("/upload", authMiddleware(uploadFile))
 	http.HandleFunc("/download/", authMiddleware(downloadFile))
 	http.HandleFunc("/files/", authMiddleware(deleteFile))
 	http.HandleFunc("/disk-usage", authMiddleware(getDiskUsage))
 
-	fmt.Println("Server running at http://0.0.0.0:8080")
-	http.ListenAndServe(":8080", nil)
+	fmt.Println("Server running at http://0.0.0.0:20740")
+	http.ListenAndServe(":20740", nil)
 }
