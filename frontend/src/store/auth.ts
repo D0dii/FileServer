@@ -18,7 +18,7 @@ export const isAuthenticatedAtom = atom((get) => {
 });
 
 // Derived atom for authentication action
-export const authenticateAtom = atom(null, (get, set, secretKey: string) => {
+export const authenticateAtom = atom(null, (_get, set, secretKey: string) => {
   const correctPassword = import.meta.env.VITE_SECRET_PASSWORD || "password";
 
   if (secretKey === correctPassword) {
@@ -33,7 +33,7 @@ export const authenticateAtom = atom(null, (get, set, secretKey: string) => {
 });
 
 // Atom for logout action
-export const logoutAtom = atom(null, (get, set) => {
+export const logoutAtom = atom(null, (_get, set) => {
   set(storedPasswordAtom, "");
   set(secretKeyAtom, "");
   set(authErrorAtom, "");
